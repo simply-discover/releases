@@ -10,7 +10,6 @@
     "version",
     "releasedAt",
     "sourceRevision",
-    "sourceRepository",
     "images",
     "releaseNotes"
   ],
@@ -35,10 +34,6 @@
     "sourceRevision": {
       "type": "string",
       "pattern": "^[0-9a-f]{40}$"
-    },
-    "sourceRepository": {
-      "type": "string",
-      "description": "Repository the images were built from, e.g. simply-discover/mta-robin."
     },
     "images": {
       "type": "object",

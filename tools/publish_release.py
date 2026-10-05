@@ -2,7 +2,7 @@
 """Write, validate and tag a release manifest. Run from the repo root.
 
 Usage: publish_release.py --product mta --version 2.4.0 \
-         --source-repo simply-discover/mta-robin --source-revision <sha> \
+         --source-revision <sha> \
          --image mta=sdmainacr.azurecr.io/mta:2.4.0@sha256:<digest> [--notes FILE] [--push]
 
 Without --push nothing is committed, tagged or pushed (dry run: files only).
@@ -16,7 +16,6 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--product", required=True)
     ap.add_argument("--version", required=True)
-    ap.add_argument("--source-repo", required=True)
     ap.add_argument("--source-revision", required=True)
     ap.add_argument("--image", action="append", required=True, help="role=registry/repo:tag@sha256:digest")
     ap.add_argument("--notes", help="markdown file for release notes")
@@ -47,7 +46,7 @@ def main():
 
     manifest = dict(schemaVersion=1, product=a.product, version=a.version,
         releasedAt=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        sourceRevision=a.source_revision, sourceRepository=a.source_repo,
+        sourceRevision=a.source_revision,
         images=images, releaseNotes=str(md))
     import jsonschema  # pip install jsonschema
     jsonschema.validate(manifest, json.load(open("schema/release-manifest.v1.schema.json")))  # before writing anything
