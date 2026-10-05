@@ -26,8 +26,16 @@ def main():
     tag = f"{a.product}/{a.version}"
     base = pathlib.Path(a.product) / "versions"
     mf, md = base / f"{a.version}.json", base / f"{a.version}.md"
-    if mf.exists() or subprocess.run(["git", "rev-parse", "-q", "--verify", f"refs/tags/{tag}"], capture_output=True).returncode == 0:
-        sys.exit(f"ERROR: {tag} already exists; releases are immutable")
+    if mf.exists():
+        sys.exit(f"ERROR: {mf} already exists; releases are immutable")
+    # git may be absent (e.g. slim CI container). A dry run then relies on the caller's own tag
+    # check; --push needs git anyway, so it fails closed.
+    try:
+        if subprocess.run(["git", "rev-parse", "-q", "--verify", f"refs/tags/{tag}"], capture_output=True).returncode == 0:
+            sys.exit(f"ERROR: {tag} already exists; releases are immutable")
+    except FileNotFoundError:
+        if a.push: sys.exit("ERROR: git is required with --push")
+        print("WARNING: git not found; skipped local tag-exists check")
 
     images = {}
     for spec in a.image:
