@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/simply-discover/releases/schema/release-manifest.v1.schema.json",
+  "title": "Simply Discover release manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "version", "releasedAt", "sourceRevision", "images", "releaseNotes"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "version": {
+      "type": "string",
+      "description": "Three-part SemVer. Must equal the Git tag and every image tag.",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
+    },
+    "releasedAt": { "type": "string", "format": "date-time" },
+    "sourceRevision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["server", "worker", "react"],
+      "properties": {
+        "server": { "$ref": "#/$defs/image" },
+        "worker": { "$ref": "#/$defs/image" },
+        "react": { "$ref": "#/$defs/image" }
+      }
+    },
+    "releaseNotes": {
+      "type": "string",
+      "pattern": "^versions/.+\\.md$"
+    },
+    "compatibility": {
+      "type": "object",
+      "description": "Optional compatibility constraints, e.g. minimum upgrade-from version.",
+      "properties": {
+        "minUpgradeFrom": { "type": "string" },
+        "migrationNotes": { "type": "string" }
+      }
+    },
+    "supportStatus": { "enum": ["supported", "deprecated", "withdrawn"] },
+    "supersededBy": { "type": "string", "description": "Version that replaces this one when withdrawn." },
+    "sbom": { "type": "string" },
+    "provenance": { "type": "string" }
+  },
+  "$defs": {
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry", "repository", "tag", "digest"],
+      "properties": {
+        "registry": { "type": "string", "const": "sdmainacr.azurecr.io" },
+        "repository": { "type": "string", "minLength": 1 },
+        "tag": { "type": "string", "description": "Full SemVer tag; moving aliases are not allowed.", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$" },
+        "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    }
+  }
+}
