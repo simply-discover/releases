@@ -1,0 +1,22 @@
+name: validate
+on: [push, pull_request]
+jobs:
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install jsonschema
+      - name: Validate manifests and version/tag consistency
+        run: |
+          python - <<'PY'
+          import glob, json, pathlib, jsonschema
+          schema = json.load(open("schema/release-manifest.v1.schema.json"))
+          for f in glob.glob("*/versions/*.json"):
+              m = json.load(open(f)); jsonschema.validate(m, schema)
+              p = pathlib.Path(f)
+              assert m["product"] == p.parts[0], f"{f}: product mismatch"
+              assert m["version"] == p.stem, f"{f}: version mismatch"
+              assert all(i["tag"] == m["version"] for i in m["images"].values()), f"{f}: image tag != version"
+              assert pathlib.Path(m["releaseNotes"]).exists(), f"{f}: missing notes"
+              print("ok", f)
+          PY

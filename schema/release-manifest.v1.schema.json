@@ -4,53 +4,115 @@
   "title": "Simply Discover release manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "version", "releasedAt", "sourceRevision", "images", "releaseNotes"],
+  "required": [
+    "schemaVersion",
+    "product",
+    "version",
+    "releasedAt",
+    "sourceRevision",
+    "sourceRepository",
+    "images",
+    "releaseNotes"
+  ],
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": {
+      "const": 1
+    },
+    "product": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Product/deployment this release belongs to, e.g. mta or app. Matches the directory and Git tag prefix."
+    },
     "version": {
       "type": "string",
       "description": "Three-part SemVer. Must equal the Git tag and every image tag.",
       "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
     },
-    "releasedAt": { "type": "string", "format": "date-time" },
-    "sourceRevision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "releasedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sourceRepository": {
+      "type": "string",
+      "description": "Repository the images were built from, e.g. simply-discover/mta-robin."
+    },
     "images": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["server", "worker", "react"],
-      "properties": {
-        "server": { "$ref": "#/$defs/image" },
-        "worker": { "$ref": "#/$defs/image" },
-        "react": { "$ref": "#/$defs/image" }
+      "description": "Image roles for this product, keyed by role (e.g. mta; or server/worker/react for app).",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/image"
       }
     },
     "releaseNotes": {
       "type": "string",
-      "pattern": "^versions/.+\\.md$"
+      "pattern": "^[a-z][a-z0-9-]*/versions/.+\\.md$"
     },
     "compatibility": {
       "type": "object",
       "description": "Optional compatibility constraints, e.g. minimum upgrade-from version.",
       "properties": {
-        "minUpgradeFrom": { "type": "string" },
-        "migrationNotes": { "type": "string" }
+        "minUpgradeFrom": {
+          "type": "string"
+        },
+        "migrationNotes": {
+          "type": "string"
+        }
       }
     },
-    "supportStatus": { "enum": ["supported", "deprecated", "withdrawn"] },
-    "supersededBy": { "type": "string", "description": "Version that replaces this one when withdrawn." },
-    "sbom": { "type": "string" },
-    "provenance": { "type": "string" }
+    "supportStatus": {
+      "enum": [
+        "supported",
+        "deprecated",
+        "withdrawn"
+      ]
+    },
+    "supersededBy": {
+      "type": "string",
+      "description": "Version that replaces this one when withdrawn."
+    },
+    "sbom": {
+      "type": "string"
+    },
+    "provenance": {
+      "type": "string"
+    }
   },
   "$defs": {
     "image": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["registry", "repository", "tag", "digest"],
+      "required": [
+        "registry",
+        "repository",
+        "tag",
+        "digest"
+      ],
       "properties": {
-        "registry": { "type": "string", "const": "sdmainacr.azurecr.io" },
-        "repository": { "type": "string", "minLength": 1 },
-        "tag": { "type": "string", "description": "Full SemVer tag; moving aliases are not allowed.", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$" },
-        "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+        "registry": {
+          "type": "string",
+          "const": "sdmainacr.azurecr.io"
+        },
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "type": "string",
+          "description": "Full SemVer tag; moving aliases are not allowed.",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
       }
     }
   }
