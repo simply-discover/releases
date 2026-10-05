@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "product": "mta",
+  "version": "0.0.0-test.3",
+  "releasedAt": "2026-10-05T18:42:08Z",
+  "sourceRevision": "1cc01a882c619d1dda2668a50031d08f634d31fe",
+  "sourceRepository": "simply-discover/mta-robin",
+  "images": {
+    "mta": {
+      "registry": "sdmainacr.azurecr.io",
+      "repository": "mta",
+      "tag": "0.0.0-test.3",
+      "digest": "sha256:a943b909f638cbf78b66a4aa406a4669209ba5d552262f79f92c10b3ed873d39"
+    }
+  },
+  "releaseNotes": "mta/versions/0.0.0-test.3.md"
+}
