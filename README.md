@@ -5,7 +5,7 @@ images or credentials.
 
 ## Layout
 
-One directory per product/deployment (`mta`, later `app`, ...):
+One directory per product/deployment (`mta`, `solr`, `dotnet-app`, ...):
 
 ```text
 ├── schema/release-manifest.v1.schema.json

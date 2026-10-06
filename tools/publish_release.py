@@ -6,7 +6,7 @@ Full release (every image built for this version):
       --image mta=sdmainacr.azurecr.io/mta:2.4.0@sha256:<digest> --revision mta=<40-hex sha> [--notes FILE]
 
 Partial release (e.g. worker-only hotfix): rebuild some images, carry the rest over from the base release:
-  publish_release.py --product app --version 1.4.1 --base-release 1.4.0 --base-manifest base.json \
+  publish_release.py --product dotnet-app --version 1.4.1 --base-release 1.4.0 --base-manifest base.json \
       --image worker=sdmainacr.azurecr.io/dotnet-app-worker:1.4.1@sha256:<digest> --revision worker=<sha> \
       --carry server --carry react
 

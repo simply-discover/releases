@@ -19,7 +19,7 @@
     "product": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]*$",
-      "description": "Product/deployment this release belongs to, e.g. mta or app. Matches the directory and Git tag prefix."
+      "description": "Product/deployment this release belongs to, e.g. mta, solr or dotnet-app. Matches the directory and Git tag prefix."
     },
     "version": {
       "type": "string",
@@ -32,7 +32,7 @@
     },
     "images": {
       "type": "object",
-      "description": "Image roles for this product, keyed by role (e.g. mta; or server/worker/react for app).",
+      "description": "Image roles for this product, keyed by role (e.g. mta; or server/worker/react for dotnet-app).",
       "minProperties": 1,
       "propertyNames": {
         "pattern": "^[a-z][a-z0-9-]*$"
