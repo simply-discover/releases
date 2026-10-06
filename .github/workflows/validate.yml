@@ -16,7 +16,8 @@ jobs:
               p = pathlib.Path(f)
               assert m["product"] == p.parts[0], f"{f}: product mismatch"
               assert m["version"] == p.stem, f"{f}: version mismatch"
-              assert all(i["tag"] == m["version"] for i in m["images"].values()), f"{f}: image tag != version"
+              assert any(i["tag"] == m["version"] for i in m["images"].values()), f"{f}: no image built for this version"
+              assert all(i["tag"] == m["version"] or "baseRelease" in m for i in m["images"].values()), f"{f}: carried image without baseRelease"
               assert pathlib.Path(m["releaseNotes"]).exists(), f"{f}: missing notes"
               print("ok", f)
           PY

@@ -9,7 +9,6 @@
     "product",
     "version",
     "releasedAt",
-    "sourceRevision",
     "images",
     "releaseNotes"
   ],
@@ -24,16 +23,12 @@
     },
     "version": {
       "type": "string",
-      "description": "Three-part SemVer. Must equal the Git tag and every image tag.",
+      "description": "Three-part SemVer release version. At least one image must have tag == version (the component(s) built for this release); carried-over images keep their earlier tag.",
       "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
     },
     "releasedAt": {
       "type": "string",
       "format": "date-time"
-    },
-    "sourceRevision": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{40}$"
     },
     "images": {
       "type": "object",
@@ -78,6 +73,11 @@
     },
     "provenance": {
       "type": "string"
+    },
+    "baseRelease": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$",
+      "description": "For a partial release (e.g. a worker-only hotfix): the earlier release of this product whose unchanged images were carried over."
     }
   },
   "$defs": {
@@ -88,7 +88,8 @@
         "registry",
         "repository",
         "tag",
-        "digest"
+        "digest",
+        "sourceRevision"
       ],
       "properties": {
         "registry": {
@@ -101,12 +102,17 @@
         },
         "tag": {
           "type": "string",
-          "description": "Full SemVer tag; moving aliases are not allowed.",
+          "description": "Full SemVer tag; moving aliases are not allowed. Equals the release version for images built in this release, or an earlier version for carried-over images.",
           "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
         },
         "digest": {
           "type": "string",
           "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "sourceRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Commit this image was built from. Differs per image in a partial release."
         }
       }
     }
