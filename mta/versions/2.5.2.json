@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "product": "mta",
+  "version": "2.5.2",
+  "releasedAt": "2026-10-08T03:22:10Z",
+  "images": {
+    "mta": {
+      "registry": "sdmainacr.azurecr.io",
+      "repository": "mta",
+      "tag": "2.5.2",
+      "digest": "sha256:0684ffe67543a803d3251e26f8857c666ad4790bfb3daf2742ac6d2b1a1ebfdc",
+      "sourceRevision": "ebcce48587b0f9b48646c99d7b44801cf7b58e00"
+    }
+  },
+  "releaseNotes": "mta/versions/2.5.2.md"
+}
