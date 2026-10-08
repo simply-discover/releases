@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "product": "dotnet-app",
+  "version": "8.3.1",
+  "releasedAt": "2026-10-08T03:19:11Z",
+  "images": {
+    "react": {
+      "registry": "sdmainacr.azurecr.io",
+      "repository": "react-app",
+      "tag": "8.3.1",
+      "digest": "sha256:01094b8a0184a2685c176809137e38e2c67261ff1b71210e25dff44d7d2389cc",
+      "sourceRevision": "38446be494d355a1be62cc6202ce7b5cec01b58b"
+    },
+    "server": {
+      "registry": "sdmainacr.azurecr.io",
+      "repository": "dotnet-app-server",
+      "tag": "8.3.1",
+      "digest": "sha256:fa8b91bf47957b1fdb8084d08b70b8cb9f0337d3b2107305f9fd0501e8704a22",
+      "sourceRevision": "38446be494d355a1be62cc6202ce7b5cec01b58b"
+    },
+    "worker": {
+      "registry": "sdmainacr.azurecr.io",
+      "repository": "dotnet-app-worker",
+      "tag": "8.3.1",
+      "digest": "sha256:c90b249095fd618b8cc3f4b73b92f936ae66ded0aba5409c10283e89abddbdc1",
+      "sourceRevision": "38446be494d355a1be62cc6202ce7b5cec01b58b"
+    }
+  },
+  "releaseNotes": "dotnet-app/versions/8.3.1.md"
+}
