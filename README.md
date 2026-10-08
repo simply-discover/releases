@@ -53,34 +53,38 @@ Deploy by digest, and treat a digest that differs from the manifest as a failed 
 
 ## Finding new releases with Renovate
 
-The tags are what Renovate looks for. Keep the version you intend to run in a small file in your own
-repository:
+The tags are what Renovate looks for. Keep the version you intend to run of each product in a small
+file in your own repository, one annotated line per product you use:
 
 ```yaml
 # simplydiscover.release.yaml
-# renovate: datasource=github-tags depName=simply-discover/releases versioning=semver extractVersion=^mta/(?<version>.+)$
-version: 2.5.1
+# renovate: datasource=github-tags depName=dotnet-app packageName=simply-discover/releases versioning=semver extractVersion=^dotnet-app/(?<version>.+)$
+dotnet-app: 8.3.1
+# renovate: datasource=github-tags depName=mta packageName=simply-discover/releases versioning=semver extractVersion=^mta/(?<version>.+)$
+mta: 2.5.1
 ```
 
-and add a custom manager to your `renovate.json`:
+and add a custom manager to your existing `renovate.json`:
 
 ```json
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "enabledManagers": ["custom.regex"],
   "customManagers": [
     {
       "customType": "regex",
       "managerFilePatterns": ["/^simplydiscover\\.release\\.yaml$/"],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) versioning=(?<versioning>\\S+) extractVersion=(?<extractVersion>\\S+)\\s+version:\\s*(?<currentValue>\\S+)"
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) packageName=(?<packageName>\\S+) versioning=(?<versioning>\\S+) extractVersion=(?<extractVersion>\\S+)\\s+\\S+:\\s*(?<currentValue>\\S+)"
       ]
     }
   ]
 }
 ```
 
-Use `extractVersion=^<product>/(?<version>.+)$` to pick the product (`mta`, `solr` or `dotnet-app`).
-Renovate then opens a pull request that changes only the version. Merging that pull request is your
-approval of the new release; Renovate itself deploys nothing and needs no credentials for this
-repository.
+- `depName` is the product (`dotnet-app`, `mta` or `solr`); each product gets its own pull request.
+  `extractVersion` selects that product's tags and strips the `<product>/` prefix.
+- This adds a manager alongside whatever you already use. Do not set `enabledManagers` unless you
+  mean to switch off Renovate's other managers.
+- Renovate opens a pull request that changes only the version. Merging that pull request is your
+  approval of the new release; Renovate itself deploys nothing and needs no credentials for this
+  repository.
