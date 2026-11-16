@@ -9,10 +9,12 @@ jobs:
       - name: Validate manifests and version/tag consistency
         run: |
           python - <<'PY'
-          import glob, json, pathlib, jsonschema
-          schema = json.load(open("schema/release-manifest.v1.schema.json"))
+          import glob, json, pathlib, re, jsonschema
+          schemas = {n: json.load(open(f"schema/release-manifest.v{n}.schema.json")) for n in (1, 2)}
           for f in glob.glob("*/versions/*.json"):
-              m = json.load(open(f)); jsonschema.validate(m, schema)
+              m = json.load(open(f))
+              assert m.get("schemaVersion") in schemas, f"{f}: schemaVersion must be 1 or 2"
+              jsonschema.validate(m, schemas[m["schemaVersion"]])
               p = pathlib.Path(f)
               assert m["product"] == p.parts[0], f"{f}: product mismatch"
               assert m["version"] == p.stem, f"{f}: version mismatch"
@@ -20,4 +22,11 @@ jobs:
               assert all(i["tag"] == m["version"] or "baseRelease" in m for i in m["images"].values()), f"{f}: carried image without baseRelease"
               assert pathlib.Path(m["releaseNotes"]).exists(), f"{f}: missing notes"
               print("ok", f)
+          # Schema version 2 takes X.Y.Z and X.Y.Z-beta.N only.
+          pattern = re.compile(schemas[2]["properties"]["version"]["pattern"])
+          for v in ("8.6.0", "8.6.0-beta.1", "8.6.0-beta.10"):
+              assert pattern.match(v), f"version {v} must be accepted"
+          for v in ("8.6.0-rc.1", "8.6.0-beta", "8.6.0-beta.0", "8.6", "v8.6.0", "8.6.0-beta.1.2", ""):
+              assert not pattern.match(v), f"version {v!r} must be refused"
+          print("ok schema v2 version rule")
           PY

@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/simply-discover/releases/schema/release-manifest.v2.schema.json",
+  "title": "Simply Discover release manifest (schema version 2, dotnet-app)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "product",
+    "version",
+    "releasedAt",
+    "images",
+    "releaseNotes",
+    "rank",
+    "security",
+    "databaseChanges",
+    "migrations",
+    "downtimeMinutes",
+    "highlights",
+    "guides"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "product": {
+      "const": "dotnet-app",
+      "description": "Schema version 2 is used by dotnet-app only. Matches the directory and Git tag prefix."
+    },
+    "version": {
+      "type": "string",
+      "description": "X.Y.Z (Stable) or X.Y.Z-beta.N (Beta). At least one image must have tag == version; carried-over images keep their earlier tag.",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-beta\\.[1-9]\\d*)?$"
+    },
+    "releasedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "images": {
+      "type": "object",
+      "description": "Image roles for this product, keyed by role (e.g. mta; or server/worker/react for dotnet-app).",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/image"
+      }
+    },
+    "releaseNotes": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*/versions/.+\\.md$"
+    },
+    "compatibility": {
+      "type": "object",
+      "description": "Optional compatibility constraints, e.g. minimum upgrade-from version.",
+      "properties": {
+        "minUpgradeFrom": {
+          "type": "string"
+        },
+        "migrationNotes": {
+          "type": "string"
+        }
+      }
+    },
+    "supportStatus": {
+      "enum": [
+        "supported",
+        "deprecated",
+        "withdrawn"
+      ]
+    },
+    "supersededBy": {
+      "type": "string",
+      "description": "Version that replaces this one when withdrawn."
+    },
+    "sbom": {
+      "type": "string"
+    },
+    "provenance": {
+      "type": "string"
+    },
+    "baseRelease": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$",
+      "description": "For a partial release (e.g. a worker-only hotfix): the earlier release of this product whose unchanged images were carried over."
+    },
+    "rank": {
+      "enum": [
+        "patch",
+        "minor",
+        "major"
+      ],
+      "description": "Size of the release."
+    },
+    "security": {
+      "type": "boolean",
+      "description": "True when the release carries a security fix."
+    },
+    "databaseChanges": {
+      "enum": [
+        "none",
+        "additive",
+        "breaking"
+      ]
+    },
+    "migrations": {
+      "type": "array",
+      "description": "The sign-off's record of each migration in the release; [] when none.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "impact",
+          "reason"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "enum": [
+              "additive",
+              "breaking"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "downtimeMinutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 240
+    },
+    "highlights": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "description": "Shown to the customer as written."
+    },
+    "guides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "url"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://."
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registry",
+        "repository",
+        "tag",
+        "digest",
+        "sourceRevision"
+      ],
+      "properties": {
+        "registry": {
+          "type": "string",
+          "const": "sdmainacr.azurecr.io"
+        },
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "type": "string",
+          "description": "Full SemVer tag; moving aliases are not allowed. Equals the release version for images built in this release, or an earlier version for carried-over images.",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "sourceRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Commit this image was built from. Differs per image in a partial release."
+        }
+      }
+    }
+  }
+}

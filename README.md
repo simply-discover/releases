@@ -20,12 +20,29 @@ Each product is released and versioned independently, in its own directory.
 ## Layout
 
 ```text
-├── schema/release-manifest.v1.schema.json   the manifest schema
+├── schema/release-manifest.v1.schema.json   the manifest schema (mta, solr and older dotnet-app releases)
+├── schema/release-manifest.v2.schema.json   the manifest schema for dotnet-app releases from now on
 ├── tools/publish_release.py                 how releases are written and validated
 └── <product>/versions/
     ├── <version>.json                       release manifest
     └── <version>.md                         release notes
 ```
+
+## Schema version 2 (dotnet-app)
+
+`dotnet-app` releases are written with `schemaVersion` 2. It has everything version 1 has, plus seven fields:
+
+- `rank`: how big the release is, `patch`, `minor` or `major`.
+- `security`: true when the release carries a security fix.
+- `databaseChanges`: `none`, `additive` or `breaking`, the classification of the release's database migrations.
+- `migrations`: each migration in the release as `id`, `impact` and `reason`; empty when there are none.
+- `downtimeMinutes`: the expected downtime while installing, 1 to 240 minutes.
+- `highlights`: up to three short lines (80 characters each) shown to the customer as written.
+- `guides`: links as `title` and an `https://` `url`; empty for now.
+
+Stable or Beta is read from the version: `X.Y.Z` is Stable and `X.Y.Z-beta.N` is Beta. There is no separate
+channel field, and no other suffix is accepted for `dotnet-app`. `mta` and `solr` stay on version 1, and
+published manifests are never rewritten.
 
 ## Releases and tags
 
