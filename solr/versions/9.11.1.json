@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "product": "solr",
+  "version": "9.11.1",
+  "releasedAt": "2026-11-25T14:54:10Z",
+  "images": {
+    "solr": {
+      "registry": "sdmainacr.azurecr.io",
+      "repository": "sd-solr",
+      "tag": "9.11.1",
+      "digest": "sha256:f3974c3d7ca8645e6d0a420a3eaeb406cf5fcbe38a5be852cff79dd07dfb7ade",
+      "sourceRevision": "089376c7806822b7386967f0ed81476b0cbc3fba"
+    }
+  },
+  "releaseNotes": "solr/versions/9.11.1.md"
+}
